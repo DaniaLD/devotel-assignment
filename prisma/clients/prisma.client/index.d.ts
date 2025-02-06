@@ -2101,6 +2101,7 @@ export namespace Prisma {
 
   export type JobOfferWhereUniqueInput = Prisma.AtLeast<{
     id?: string
+    title_company?: JobOfferTitleCompanyCompoundUniqueInput
     AND?: JobOfferWhereInput | JobOfferWhereInput[]
     OR?: JobOfferWhereInput[]
     NOT?: JobOfferWhereInput | JobOfferWhereInput[]
@@ -2113,7 +2114,7 @@ export namespace Prisma {
     industry?: StringFilter<"JobOffer"> | string
     skills?: StringNullableListFilter<"JobOffer">
     postedDate?: DateTimeFilter<"JobOffer"> | Date | string
-  }, "id">
+  }, "id" | "title_company">
 
   export type JobOfferOrderByWithAggregationInput = {
     id?: SortOrder
@@ -2283,6 +2284,11 @@ export namespace Prisma {
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
+  }
+
+  export type JobOfferTitleCompanyCompoundUniqueInput = {
+    title: string
+    company: string
   }
 
   export type JobOfferCountOrderByAggregateInput = {

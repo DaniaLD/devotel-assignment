@@ -13,9 +13,9 @@ export class JobOfferPostgresRepository implements CreateJobOfferPort {
 
   async create(jobOffer: JobOffer): Promise<JobOffer> {
     return this.jobOfferMapper.toDomain(
-      await this.prisma.jobOffer.create(
-        this.jobOfferMapper.toPersistence(jobOffer),
-      ),
+      await this.prisma.jobOffer.create({
+        data: this.jobOfferMapper.toPersistence(jobOffer),
+      }),
     );
   }
 }

@@ -9,10 +9,14 @@ import {
 import { firstValueFrom } from 'rxjs';
 import * as dayjs from 'dayjs';
 import { HttpService } from '@nestjs/axios';
+import CreateJobOfferPort from '../ports/outbounds/create-job-offer.port';
 
 @Injectable()
 export class FetchJobOffersService {
-  constructor(private readonly httpService: HttpService) {}
+  constructor(
+    private readonly httpService: HttpService,
+    private readonly createJobOfferPort: CreateJobOfferPort,
+  ) {}
 
   @Cron(ConfigService.get<string>('cronJobs.fetchJobOffers'))
   async fetchJobOffers(): Promise<void> {
@@ -29,6 +33,12 @@ export class FetchJobOffersService {
         jobMap.set(key, job);
       }
     });
+
+    const uniqueJobs = Array.from(jobMap.values());
+
+    await Promise.all(
+      uniqueJobs.map((job) => this.createJobOfferPort.create(job)),
+    );
   }
 
   private async fetchJobOffersFromResources(): Promise<

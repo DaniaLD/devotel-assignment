@@ -19,4 +19,6 @@ model JobOffer {
   industry   String
   skills     String[]
   postedDate DateTime
+
+  @@unique([title, company])
 }
