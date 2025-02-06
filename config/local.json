@@ -9,6 +9,6 @@
     "uri": ""
   },
   "cronJobs": {
-    "fetchJobOffers": "0 0 2 * * *"
+    "fetchJobOffers": "0 */5 * * * *"
   }
 }
