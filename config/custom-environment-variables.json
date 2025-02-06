@@ -1,0 +1,14 @@
+{
+  "env": "NODE_ENV",
+  "app": {
+    "httpServer": {
+      "port": "APP_HTTP_SERVER_PORT"
+    }
+  },
+  "database": {
+    "uri": "DATABASE_URI"
+  },
+  "cronJobs": {
+    "fetchJobOffers": "FETCH_JOB_OFFERS_CRON_JOB_PERIOD"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "env": "development",
+  "app": {
+    "httpServer": {
+      "port": 3000
+    }
+  },
+  "database": {
+    "uri": ""
+  },
+  "cronJobs": {
+    "fetchJobOffers": "0 0 2 * * *"
+  }
+}
