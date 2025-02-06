@@ -1,4 +1,6 @@
 import { Dayjs } from 'dayjs';
+import { ICompany } from './companies.interface';
+import { ISkill } from './skills.interfacfe';
 
 export interface IJobOffer {
   id: string;
@@ -7,10 +9,11 @@ export interface IJobOffer {
   type: string;
   salaryMin: number;
   salaryMax: number;
-  company: string;
-  industry: string;
-  skills: string[];
+  companyId: string;
   postedDate: Date | Dayjs;
+
+  company: ICompany;
+  skills: ISkill[];
 }
 
 export interface IProviderAJobOffers {

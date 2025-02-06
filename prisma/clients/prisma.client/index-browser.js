@@ -124,10 +124,24 @@ exports.Prisma.JobOfferScalarFieldEnum = {
   type: 'type',
   salaryMin: 'salaryMin',
   salaryMax: 'salaryMax',
-  company: 'company',
-  industry: 'industry',
-  skills: 'skills',
-  postedDate: 'postedDate'
+  postedDate: 'postedDate',
+  companyId: 'companyId'
+};
+
+exports.Prisma.CompanyScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  industry: 'industry'
+};
+
+exports.Prisma.SkillScalarFieldEnum = {
+  id: 'id',
+  name: 'name'
+};
+
+exports.Prisma.JobSkillScalarFieldEnum = {
+  jobId: 'jobId',
+  skillId: 'skillId'
 };
 
 exports.Prisma.SortOrder = {
@@ -140,9 +154,17 @@ exports.Prisma.QueryMode = {
   insensitive: 'insensitive'
 };
 
+exports.Prisma.NullsOrder = {
+  first: 'first',
+  last: 'last'
+};
+
 
 exports.Prisma.ModelName = {
-  JobOffer: 'JobOffer'
+  JobOffer: 'JobOffer',
+  Company: 'Company',
+  Skill: 'Skill',
+  JobSkill: 'JobSkill'
 };
 
 /**

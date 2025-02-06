@@ -4,6 +4,22 @@ import JobOffer from '../../domain/entities/job-offer.entity';
 import * as dayjs from 'dayjs';
 import { IListJobOffersResult } from '../../domain/models/list-job-offers.command.interface';
 
+class ListJobOffersCompanyResponseItemsDto {
+  @ApiProperty()
+  id: number;
+  @ApiProperty()
+  name: string;
+  @ApiProperty()
+  industry: string;
+}
+
+class ListJobOffersSkillResponseItemsDto {
+  @ApiProperty()
+  id: number;
+  @ApiProperty()
+  name: string;
+}
+
 class ListJobOffersResponseItemsDto {
   @ApiProperty()
   id: number;
@@ -17,12 +33,12 @@ class ListJobOffersResponseItemsDto {
   salaryMin: number;
   @ApiProperty()
   salaryMax: number;
-  @ApiProperty()
-  company: string;
+  @ApiProperty({ type: ListJobOffersCompanyResponseItemsDto })
+  company: ListJobOffersCompanyResponseItemsDto;
   @ApiProperty()
   industry: string;
-  @ApiProperty({ type: String, isArray: true })
-  skills: string[];
+  @ApiProperty({ type: ListJobOffersSkillResponseItemsDto, isArray: true })
+  skills: ListJobOffersSkillResponseItemsDto[];
   @ApiProperty()
   postedDate: string;
 }
@@ -36,9 +52,16 @@ export default class ListJobOffersResponse {
     type: string;
     salaryMin: number;
     salaryMax: number;
-    company: string;
+    company: {
+      id: string;
+      name: string;
+      industry: string;
+    };
     industry: string;
-    skills: string[];
+    skills: {
+      id: string;
+      name: string;
+    }[];
     postedDate: string;
   }[];
   @ApiProperty()
@@ -52,8 +75,10 @@ export default class ListJobOffersResponse {
 
     const items = [];
     jobOffers.forEach((jo) => {
+      const { companyId: _, ...restJoDetails } = jo;
+
       items.push({
-        ...jo,
+        ...restJoDetails,
         postedDate: dayjs(jo.postedDate).toISOString(),
       });
     });

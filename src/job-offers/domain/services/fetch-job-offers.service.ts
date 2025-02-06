@@ -73,9 +73,16 @@ export class FetchJobOffersService {
         salary: job.details.salaryRange,
         salaryMin: salaryParts ? parseInt(salaryParts[1]) * 1000 : 0,
         salaryMax: salaryParts ? parseInt(salaryParts[2]) * 1000 : 0,
-        company: job.company.name,
-        industry: job.company.industry,
-        skills: job.skills,
+        company: {
+          name: job.company.name,
+          industry: job.company.industry,
+          id: '',
+        },
+        companyId: '',
+        skills: job.skills.map((skill) => ({
+          id: '',
+          name: skill,
+        })),
         postedDate: dayjs(job.postedDate),
       };
     });
@@ -91,9 +98,16 @@ export class FetchJobOffersService {
       type: job.location.remote ? 'Remote' : 'On-site',
       salaryMin: job.compensation.min,
       salaryMax: job.compensation.max,
-      company: job.employer.companyName,
-      industry: 'N/A', // No industry info in structure B
-      skills: job.requirements.technologies,
+      company: {
+        name: job.employer.companyName,
+        industry: 'N/A', // No industry info in structure B
+        id: '',
+      },
+      companyId: '',
+      skills: job.requirements.technologies.map((skill) => ({
+        id: '',
+        name: skill,
+      })),
       postedDate: dayjs(job.datePosted),
     }));
   }

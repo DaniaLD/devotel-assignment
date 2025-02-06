@@ -1,3 +1,6 @@
+import { ISkillSchema } from './skills.schema';
+import { ICompanySchema } from './company.schema';
+
 export interface IJobOfferSchema {
   id: string;
   title: string;
@@ -5,8 +8,9 @@ export interface IJobOfferSchema {
   type: string;
   salaryMin: number;
   salaryMax: number;
-  company: string;
-  industry: string;
-  skills: string[];
+  companyId: string;
   postedDate: Date;
+
+  company: ICompanySchema;
+  skills: ISkillSchema[];
 }

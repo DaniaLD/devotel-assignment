@@ -8,7 +8,6 @@ import {
   IListJobOffersResult,
 } from '../../../domain/models/list-job-offers.command.interface';
 import ListJobOffersPort from '../../../domain/ports/outbounds/list-job-offers.port';
-import { IJobOfferSchema } from './job-offer.schema';
 import { Prisma } from '../../../../../prisma/clients/prisma.client';
 import JobOfferWhereInput = Prisma.JobOfferWhereInput;
 
@@ -24,10 +23,56 @@ export class JobOfferPostgresRepository
 
   async create(jobOffer: JobOffer): Promise<JobOffer> {
     try {
-      const insertedJobOffer = await this.prisma.jobOffer.create({
-        data: this.jobOfferMapper.toPersistence(jobOffer),
+      const company = await this.prisma.company.upsert({
+        where: { name: jobOffer.company.name },
+        update: {},
+        create: {
+          name: jobOffer.company.name,
+          industry: jobOffer.company.industry,
+        },
       });
-      return this.jobOfferMapper.toDomain(insertedJobOffer);
+      const {
+        id: _,
+        skills,
+        postedDate,
+        companyId,
+        type,
+        salaryMin,
+        salaryMax,
+        location,
+        title,
+      } = this.jobOfferMapper.toPersistence(jobOffer);
+      const insertedSkills = await Promise.all(
+        jobOffer.skills.map(async (skill) =>
+          this.prisma.skill.upsert({
+            where: { name: skill.name },
+            update: {},
+            create: { name: skill.name },
+          }),
+        ),
+      );
+
+      const insertedJobOffer = await this.prisma.jobOffer.create({
+        data: {
+          title: title,
+          location: location,
+          type: type,
+          salaryMin: salaryMin,
+          salaryMax: salaryMax,
+          companyId: company.id,
+          postedDate: postedDate,
+          skills: {
+            create: insertedSkills.map((skill) => ({
+              skill: { connect: { id: skill.id } },
+            })),
+          },
+        },
+      });
+      return this.jobOfferMapper.toDomain({
+        ...insertedJobOffer,
+        company,
+        skills,
+      });
     } catch (error) {
       if (error?.code === 'P2002') {
         this.logger.error(
@@ -76,12 +121,13 @@ export class JobOfferPostgresRepository
     conditions: JobOfferWhereInput,
     limit: number,
     offset: number,
-  ): Promise<{ jobOffers: IJobOfferSchema[]; total: number }> {
+  ): Promise<{ jobOffers: any[]; total: number }> {
     const [jobOffers, total] = await Promise.all([
       this.prisma.jobOffer.findMany({
         where: conditions,
         take: +limit,
         skip: +offset,
+        include: { company: true, skills: { include: { skill: true } } },
       }),
       this.prisma.jobOffer.count({
         where: conditions,

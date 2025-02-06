@@ -13,10 +13,11 @@ export class JobOfferMapper {
       type: jo.type,
       salaryMin: jo.salaryMin,
       salaryMax: jo.salaryMax,
-      company: jo.company,
-      industry: jo.industry,
-      skills: jo.skills,
+      companyId: jo.companyId,
       postedDate: dayjs(jo.postedDate),
+
+      company: jo.company,
+      skills: jo.skills.map((skill) => (skill as any).skill),
     });
   }
 
@@ -28,10 +29,11 @@ export class JobOfferMapper {
       type: jo.type,
       salaryMin: jo.salaryMin,
       salaryMax: jo.salaryMax,
-      company: jo.company,
-      industry: jo.industry,
-      skills: jo.skills,
+      companyId: jo.companyId,
       postedDate: dayjs(jo.postedDate).toDate(),
+
+      company: jo.company,
+      skills: jo.skills,
     };
   }
 }
