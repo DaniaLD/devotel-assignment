@@ -53,17 +53,22 @@ export class FetchJobOffersService {
   private unifiedTransformerFoProviderA(
     data: IProviderAJobOffers,
   ): IJobOffer[] {
-    return data?.jobs.map((job) => ({
-      id: job.jobId,
-      title: job.title,
-      location: job.details.location,
-      type: job.details.type,
-      salary: job.details.salaryRange,
-      company: job.company.name,
-      industry: job.company.industry,
-      skills: job.skills,
-      postedDate: dayjs(job.postedDate),
-    }));
+    return data?.jobs.map((job) => {
+      const salaryParts = job.details.salaryRange.match(/\$(\d+)k - \$(\d+)k/);
+      return {
+        id: job.jobId,
+        title: job.title,
+        location: job.details.location,
+        type: job.details.type,
+        salary: job.details.salaryRange,
+        salaryMin: salaryParts ? parseInt(salaryParts[2]) * 1000 : 0,
+        salaryMax: salaryParts ? parseInt(salaryParts[1]) * 1000 : 0,
+        company: job.company.name,
+        industry: job.company.industry,
+        skills: job.skills,
+        postedDate: dayjs(job.postedDate),
+      };
+    });
   }
 
   private unifiedTransformerFoProviderB(
@@ -74,7 +79,8 @@ export class FetchJobOffersService {
       title: job.position,
       location: `${job.location.city}, ${job.location.state}`,
       type: job.location.remote ? 'Remote' : 'On-site',
-      salary: `$${job.compensation.min / 1000}k - $${job.compensation.max / 1000}k`,
+      salaryMin: job.compensation.min,
+      salaryMax: job.compensation.max,
       company: job.employer.companyName,
       industry: 'N/A', // No industry info in structure B
       skills: job.requirements.technologies,

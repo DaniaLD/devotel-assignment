@@ -5,7 +5,8 @@ export interface IJobOffer {
   title: string;
   location: string;
   type: string;
-  salary: string;
+  salaryMin: number;
+  salaryMax: number;
   company: string;
   industry: string;
   skills: string[];
