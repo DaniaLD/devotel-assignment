@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import CreateJobOfferPort from '../../../domain/ports/outbounds/create-job-offer.port';
 import { PrismaService } from '../../../../common/prisma/prisma.service';
 import JobOffer from '../../../domain/entities/job-offer.entity';
@@ -16,17 +16,30 @@ import JobOfferWhereInput = Prisma.JobOfferWhereInput;
 export class JobOfferPostgresRepository
   implements CreateJobOfferPort, ListJobOffersPort
 {
+  private readonly logger = new Logger('JobOfferPostgresRepository');
   constructor(
     private readonly prisma: PrismaService,
     private readonly jobOfferMapper: JobOfferMapper,
   ) {}
 
   async create(jobOffer: JobOffer): Promise<JobOffer> {
-    return this.jobOfferMapper.toDomain(
-      await this.prisma.jobOffer.create({
+    try {
+      const insertedJobOffer = await this.prisma.jobOffer.create({
         data: this.jobOfferMapper.toPersistence(jobOffer),
-      }),
-    );
+      });
+      return this.jobOfferMapper.toDomain(insertedJobOffer);
+    } catch (error) {
+      if (error?.code === 'P2002') {
+        this.logger.error(
+          `Duplicate record found while inserting job offer: ${jobOffer.title} - ${jobOffer.company} `,
+        );
+      } else {
+        this.logger.error(
+          `Database error while inserting job offer: ${error.message}`,
+        );
+        throw new Error('Database operation failed. Please try again later.');
+      }
+    }
   }
 
   async list(filters: IListJobOffersCommand): Promise<IListJobOffersResult> {
